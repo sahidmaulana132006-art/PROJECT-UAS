@@ -70,4 +70,20 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('/events/{event}', [EventController::class, 'show'])->whereNumber('event')->name('events.show');
 
+// Serve storage files dynamically when running on Vercel (read-only filesystem workaround)
+Route::get('/storage/{path}', function ($path) {
+    $filePath = env('VERCEL') 
+        ? '/tmp/storage/app/public/' . $path 
+        : storage_path('app/public/' . $path);
+
+    if (!file_exists($filePath)) {
+        abort(404);
+    }
+
+    $file = file_get_contents($filePath);
+    $type = mime_content_type($filePath);
+
+    return response($file, 200)->header('Content-Type', $type);
+})->where('path', '.*')->name('storage.serve');
+
 require __DIR__.'/auth.php';
