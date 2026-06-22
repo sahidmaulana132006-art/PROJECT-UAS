@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\EventCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 
 class EventController extends Controller
 {
@@ -82,9 +83,26 @@ class EventController extends Controller
 
         if ($request->hasFile('poster')) {
             $file = $request->file('poster');
-            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('posters', $fileName, 'public');
-            $data['poster'] = 'posters/' . $fileName;
+            $response = Http::asMultipart()->post(
+                'https://api.cloudinary.com/v1_1/' . env('CLOUDINARY_CLOUD_NAME') . '/image/upload',
+                [
+                    [
+                        'name' => 'file',
+                        'contents' => fopen($file->getRealPath(), 'r'),
+                        'filename' => $file->getClientOriginalName(),
+                    ],
+                    [
+                        'name' => 'upload_preset',
+                        'contents' => env('CLOUDINARY_UPLOAD_PRESET'),
+                    ],
+                ]
+            );
+
+            $result = $response->json();
+
+            if (isset($result['secure_url'])) {
+                $data['poster'] = $result['secure_url'];
+            }
         }
 
         Event::create($data);
@@ -116,15 +134,27 @@ class EventController extends Controller
         $data = $request->except('poster');
 
         if ($request->hasFile('poster')) {
-            // Delete old poster if exists
-            if ($event->poster && Storage::disk('public')->exists($event->poster)) {
-                Storage::disk('public')->delete($event->poster);
-            }
-
             $file = $request->file('poster');
-            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('posters', $fileName, 'public');
-            $data['poster'] = 'posters/' . $fileName;
+            $response = Http::asMultipart()->post(
+                'https://api.cloudinary.com/v1_1/' . env('CLOUDINARY_CLOUD_NAME') . '/image/upload',
+                [
+                    [
+                        'name' => 'file',
+                        'contents' => fopen($file->getRealPath(), 'r'),
+                        'filename' => $file->getClientOriginalName(),
+                    ],
+                    [
+                        'name' => 'upload_preset',
+                        'contents' => env('CLOUDINARY_UPLOAD_PRESET'),
+                    ],
+                ]
+            );
+
+            $result = $response->json();
+
+            if (isset($result['secure_url'])) {
+                $data['poster'] = $result['secure_url'];
+            }
         }
 
         $event->update($data);
