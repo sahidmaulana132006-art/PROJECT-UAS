@@ -28,24 +28,24 @@ class DatabaseSeeder extends Seeder
         // 2. Create Core Testing Users
         $admin = User::create([
             'name' => 'Super Admin',
-            'email' => 'admin@siek.com',
-            'password' => Hash::make('password'),
+            'email' => 'admin@gmail.com',
+            'password' => Hash::make('admin123'),
             'role' => 'admin',
         ]);
         $admin->assignRole($adminRole);
 
         $panitia = User::create([
             'name' => 'Panitia Event',
-            'email' => 'panitia@siek.com',
-            'password' => Hash::make('password'),
+            'email' => 'panitia@gmail.com',
+            'password' => Hash::make('panitia123'),
             'role' => 'panitia',
         ]);
         $panitia->assignRole($panitiaRole);
 
         $peserta = User::create([
             'name' => 'Peserta Event',
-            'email' => 'peserta@siek.com',
-            'password' => Hash::make('password'),
+            'email' => 'peserta@gmail.com',
+            'password' => Hash::make('peserta123'),
             'role' => 'peserta',
         ]);
         $peserta->assignRole($pesertaRole);
