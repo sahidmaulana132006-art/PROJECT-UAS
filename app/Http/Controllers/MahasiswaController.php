@@ -1,6 +1,6 @@
-/**
-     * Store a newly created resource in storage.
-     */
+/** * Store a newly created resource in storage. */
+
+use Illuminate\Support\Facades\Http;
     public function store(Request $request)
     {
         $input = $request->validate([
