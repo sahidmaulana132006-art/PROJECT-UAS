@@ -76,7 +76,7 @@
                             <td class="px-4 py-3">
                                 <div class="d-flex align-items-center">
                                     @if($event->poster)
-                                        <img src="{{ asset('storage/' . $event->poster) }}" alt="poster" class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                        <img src="{{ asset($event->poster) }}" alt="poster" class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
                                     @else
                                         <div class="rounded bg-primary-subtle text-primary d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
                                             <i class="bi bi-image fs-4"></i>
